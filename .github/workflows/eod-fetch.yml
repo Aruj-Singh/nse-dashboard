@@ -1,0 +1,43 @@
+name: EOD Fetch (7 PM IST)
+
+on:
+  schedule:
+    # 7:05 PM IST = 1:35 PM UTC
+    - cron: "35 13 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    # high-delivery screener scans 500 symbols at ~0.3s each + retries — give it room
+    timeout-minutes: 45
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run EOD fetch
+        run: python fetcher.py eod
+
+      - name: Commit & push data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --quiet --cached; then
+            echo "No data changes — skipping commit."
+          else
+            git commit -m "🌙 EOD fetch — $(TZ=Asia/Kolkata date '+%Y-%m-%d %H:%M IST')"
+            git push
+          fi

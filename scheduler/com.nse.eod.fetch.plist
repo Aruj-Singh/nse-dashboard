@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.nse.eod.fetch</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/python3</string>
+        <string>/Users/arujsingh/nse-dashboard/fetcher.py</string>
+        <string>eod</string>
+    </array>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>19</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- Only run on weekdays: launchd doesn't support day-of-week natively,
+         so the fetcher itself skips weekends when computing last trading date -->
+
+    <key>StandardOutPath</key>
+    <string>/Users/arujsingh/nse-dashboard/data/launchd_eod.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/arujsingh/nse-dashboard/data/launchd_eod_err.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

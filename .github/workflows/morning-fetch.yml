@@ -1,0 +1,42 @@
+name: Morning Fetch (9 AM IST)
+
+on:
+  schedule:
+    # 9:05 AM IST = 3:35 AM UTC (cron is in UTC)
+    - cron: "35 3 * * 1-5"
+  workflow_dispatch:  # allow manual trigger from Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run morning fetch
+        run: python fetcher.py morning
+
+      - name: Commit & push data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --quiet --cached; then
+            echo "No data changes — skipping commit."
+          else
+            git commit -m "🌅 Morning fetch — $(TZ=Asia/Kolkata date '+%Y-%m-%d %H:%M IST')"
+            git push
+          fi

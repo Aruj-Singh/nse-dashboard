@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+data/fetcher.log
+*.log
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Local-only broker creds (never commit)
+.config/
+*.credentials.json
+.env
+
+# Editor
+.vscode/
+.idea/
+*.swp
